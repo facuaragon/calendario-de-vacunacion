@@ -1,0 +1,60 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    padding: 5px 10px;
+}
+
+.label{
+    font-size: 13px;
+    padding-left: 10px;
+}
+
+.group{
+    display: flex;
+    align-items: center;
+    border: 1px solid rgb(125, 125, 125);
+    border-radius: 5px;
+    margin-left: 10px;
+    overflow: hidden;
+}
+
+.input{
+    background-color: transparent;
+    border: none;
+    height: 25px;
+    font-family: inherit;
+    font-size: 13px;
+    margin-left: 8px;
+    width: 100%;
+}
+
+.input:focus{
+    border:none;
+    outline: none;
+}
+
+.input::placeholder {
+    transition: opacity 0.3s ease;
+    opacity: 1;
+  }
+  
+.input:focus::placeholder {
+    opacity: 0;
+}
+
+.icon{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    right: 0;
+    padding-left: 3px;
+    padding-right: 5px;
+    height: 100%;
+}
+
+.error{
+    color: red;
+    padding-left: 10px;
+    font-size:10px;
+}

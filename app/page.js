@@ -6,7 +6,9 @@ import CalendarioDeVacunacion from "@/components/CalendarioDeVacunacion";
 export default function Home() {
   return (
     <>
-      <CalendarioDeVacunacion />
+      <div className={styles.appContainer}>
+        <CalendarioDeVacunacion />
+      </div>
     </>
   );
 }

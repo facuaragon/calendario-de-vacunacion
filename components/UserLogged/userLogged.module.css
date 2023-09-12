@@ -1,0 +1,38 @@
+.container{
+    display: flex;
+    align-items: center;
+}
+.image{
+    border-radius: 20px;
+    margin-right: 10px;
+}
+.name, .contact{
+    color:#fff;
+}
+
+.contact:hover{
+    cursor: pointer;
+    color: #000
+}
+.options{
+    display: flex;
+}
+
+.sign, .signUp, .admin{
+    color:#fff;
+    font-size: 13px;
+    text-decoration: underline;
+    cursor: pointer
+}
+.sign:hover, .signUp:hover, .admin:hover{
+    color: #000
+}
+.admin{
+    padding-right: 5px;
+}
+.sign{
+    padding-left: 5px;
+}
+.signUp{
+    padding-left: 15px;
+}
