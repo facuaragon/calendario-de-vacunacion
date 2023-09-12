@@ -13,7 +13,7 @@ export const POST = async (req) => {
   //if exists return error
   if (oldUser) {
     return NextResponse.json(
-      { error: "email is already in use" },
+      { error: "El correo electrónico ya se encuentra en uso" },
       { status: 422 }
     );
   }

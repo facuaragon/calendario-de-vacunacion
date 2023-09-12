@@ -1,10 +1,15 @@
 "use client";
 import { signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import styles from "./userLogged.module.css";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function UserLogged({ user }) {
+  const session = useSession();
+  const { data, status } = session;
+  const isAuth = status === "authenticated";
+  console.log(session);
   const logOut = () => {
     signOut();
   };
@@ -14,9 +19,9 @@ export default function UserLogged({ user }) {
 
   return (
     <div className={styles.container}>
-      {user ? (
+      {isAuth ? (
         <>
-          <Image
+          {/* <Image
             src={user.image}
             width={40}
             height={40}
@@ -30,12 +35,15 @@ export default function UserLogged({ user }) {
                 Log Out
               </div>
             </div>
+          </div> */}
+          <div className={styles.sign} onClick={logOut}>
+            Log Out
           </div>
         </>
       ) : (
         <>
-          <div className={styles.sign} onClick={logInAdmin}>
-            Log In
+          <div className={styles.sign}>
+            <Link href={"/api/auth/sign-in"}>Ingresar</Link>
           </div>
           <div className={styles.signUp}>
             <Link href={"/api/auth/sign-up"}>Registrarse</Link>

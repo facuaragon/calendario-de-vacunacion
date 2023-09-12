@@ -1,41 +1,30 @@
 "use client";
 import styles from "./styles.module.css";
 import InputField from "@/components/InputField";
-import GoogleIcon from "@/components/icons/Google";
-import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import GoogleIcon from "@/components/icons/Google";
+import { usePathname } from "next/navigation";
 
 const { useState } = require("react");
 
-export default function SignUp() {
-  const session = useSession();
-  const router = useRouter();
-  const { data, status } = session;
-  const isAuth = status === "authenticated";
-  const [error, setError] = useState("");
+export default function SignIn() {
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState({
-    name: "",
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState({
-    name: "",
     email: "",
     password: "",
   });
+  const router = useRouter();
+  const pathname = usePathname();
   const { name, email, password } = userInfo;
   const validations = (form) => {
     const errors = {};
-    if (!form.name) {
-      errors.name = "Requerido";
-    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/g.test(form.name)) {
-      errors.name = "Solo letras y espacios";
-    } else {
-      errors.name = "";
-    }
     if (!form.email) {
       errors.email = "Requerido";
     } else if (
@@ -63,22 +52,14 @@ export default function SignUp() {
     e.preventDefault();
     const error = validations(userInfo);
     setErrors(error);
-    if (!(error.name || error.email || error.password)) {
-      try {
-        const res = await fetch("/api/auth/users", {
-          method: "POST",
-          body: JSON.stringify(userInfo),
-        }).then((res) => res.json());
-        // console.log(res);
-        if (res?.user) {
-          router.push("/api/auth/sign-up/success");
-        }
-        if (res?.error) {
-          setErrors({ ...errors, email: res.error });
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    if (!(error.email || error.password)) {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+      if (res?.error) return setError(res.error);
+      router.replace("/");
     }
     setBusy(false);
   };
@@ -92,14 +73,7 @@ export default function SignUp() {
   return (
     <>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <InputField
-          label="Nombre Completo"
-          name="name"
-          type="text"
-          value={userInfo.name}
-          error={errors.name}
-          handleChange={handleChange}
-        />
+        {error && <div>{error}</div>}
         <InputField
           label="Correo Electrónico"
           name="email"
@@ -117,22 +91,25 @@ export default function SignUp() {
           handleChange={handleChange}
         />
         <button
-          className={styles.registerButton}
           type="submit"
+          className={styles.registerButton}
           disabled={busy}
           style={{ opacity: busy ? 0.5 : 1 }}
         >
-          Registrarse
+          Log In
         </button>
-        <button
-          type="button"
-          className={styles.googleButton}
-          onClick={logInWithGoogle}
-        >
-          <GoogleIcon /> Registrarse con Google
-        </button>
+        {pathname == "/api/auth/sign-in" && (
+          <button
+            type="button"
+            className={styles.googleButton}
+            onClick={logInWithGoogle}
+          >
+            <GoogleIcon /> Ingresar con Google
+          </button>
+        )}
         <p className={styles.redirect}>
-          Tienes una cuenta? <Link href="/api/auth/sign-in">Login</Link>
+          Aun no tienes una cuenta?{" "}
+          <Link href="/api/auth/sign-up">Registrarse</Link>
         </p>
       </form>
     </>

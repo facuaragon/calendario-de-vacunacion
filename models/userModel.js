@@ -15,12 +15,17 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   role: {
     type: String,
     enum: ["admin", "user"],
     default: "user",
+  },
+  signIn: {
+    type: String,
+    required: true,
+    enum: ["credentials", "google"],
+    default: "credentials",
   },
 });
 
