@@ -103,18 +103,20 @@ export default function SignIn() {
           Log In
         </button>
         {pathname == "/api/auth/sign-in" && (
-          <button
-            type="button"
-            className={styles.googleButton}
-            onClick={logInWithGoogle}
-          >
-            <GoogleIcon /> Ingresar con Google
-          </button>
+          <>
+            <button
+              type="button"
+              className={styles.googleButton}
+              onClick={logInWithGoogle}
+            >
+              <GoogleIcon /> Ingresar con Google
+            </button>
+            <p className={styles.redirect}>
+              Aun no tienes una cuenta?{" "}
+              <Link href="/api/auth/sign-up">Registrarse</Link>
+            </p>
+          </>
         )}
-        <p className={styles.redirect}>
-          Aun no tienes una cuenta?{" "}
-          <Link href="/api/auth/sign-up">Registrarse</Link>
-        </p>
       </form>
     </>
   );

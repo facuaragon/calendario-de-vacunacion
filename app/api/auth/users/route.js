@@ -21,7 +21,9 @@ export const POST = async (req) => {
     );
   }
   //if doesn't exist => create user
-  const user = await UserModel.create({ ...body });
+  let { email, name, password, birthday } = body;
+  email = email.toLowerCase();
+  const user = await UserModel.create({ email, name, password, birthday });
   return NextResponse.json({
     user: {
       id: user._id.toString(),
