@@ -23,7 +23,7 @@ export default function CompleteInformation() {
   const [age, setAge] = useState();
   const validations = (form) => {
     const errors = {};
-    console.log(form.birthday, new Date().toISOString().split("T")[0]);
+    // console.log(form.birthday, new Date().toISOString().split("T")[0]);
     if (form.birthday >= new Date().toISOString().split("T")[0]) {
       errors.birthday = "La fecha debe ser anterior al día de hoy";
     } else {

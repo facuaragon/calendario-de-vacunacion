@@ -21,12 +21,14 @@ export default function SignUp() {
     email: "",
     password: "",
     passChecked: "",
+    birthday: "",
   });
   const [errors, setErrors] = useState({
     name: "",
     email: "",
     password: "",
     passChecked: "",
+    birthday: "",
   });
   const { name, email, password } = userInfo;
   const validations = (form) => {
@@ -59,6 +61,11 @@ export default function SignUp() {
     } else if (form.passChecked !== form.password) {
       errors.passChecked = "Las contraseñas no coinciden";
     }
+    if (form.birthday >= new Date().toISOString().split("T")[0]) {
+      errors.birthday = "La fecha debe ser anterior al día de hoy";
+    } else {
+      errors.birthday = "";
+    }
     return errors;
   };
   const handleChange = (e) => {
@@ -70,7 +77,15 @@ export default function SignUp() {
     e.preventDefault();
     const error = validations(userInfo);
     setErrors(error);
-    if (!(error.name || error.email || error.password || error.passChecked)) {
+    if (
+      !(
+        error.name ||
+        error.email ||
+        error.password ||
+        error.passChecked ||
+        error.birthday
+      )
+    ) {
       try {
         const res = await fetch("/api/auth/users", {
           method: "POST",
@@ -129,6 +144,14 @@ export default function SignUp() {
           type="password"
           value={userInfo.passChecked}
           error={errors.passChecked}
+          handleChange={handleChange}
+        />
+        <InputField
+          label="Fecha de Nacimiento"
+          name="birthday"
+          type="date"
+          value={userInfo.birthday}
+          error={errors?.birthday}
           handleChange={handleChange}
         />
         <button

@@ -28,6 +28,7 @@ export const POST = async (req) => {
       email: user.email,
       name: user.name,
       role: user.role,
+      birthday: user.birthday,
     },
   });
 };

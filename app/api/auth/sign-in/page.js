@@ -62,7 +62,8 @@ export default function SignIn() {
         setBusy(false);
         return setError(res.error);
       }
-      router.replace("/");
+      router.refresh("/");
+      router.push("/");
     }
     setBusy(false);
   };
