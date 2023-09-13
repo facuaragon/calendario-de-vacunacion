@@ -37,6 +37,9 @@ export default function UserLogged({ user }) {
       {modal && <Modal type="completeProfile" />}
       {user ? (
         <>
+          <div className={styles.sign}>
+            <Link href={"/vacunas"}>Vacunas</Link>
+          </div>
           <div className={styles.sign} onClick={logOut}>
             Log Out
           </div>

@@ -21,16 +21,28 @@ export const POST = async (req) => {
     );
   }
   //if doesn't exist => create user
-  let { email, name, password, birthday } = body;
-  email = email.toLowerCase();
-  const user = await UserModel.create({ email, name, password, birthday });
-  return NextResponse.json({
-    user: {
-      id: user._id.toString(),
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      birthday: user.birthday,
-    },
-  });
+  if (body.birthday) {
+    let { email, name, password, birthday } = body;
+    email = email.toLowerCase();
+    const user = await UserModel.create({ email, name, password, birthday });
+    return NextResponse.json({
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        birthday: user.birthday,
+      },
+    });
+  } else {
+    const user = await UserModel.create({ ...body });
+    return NextResponse.json({
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    });
+  }
 };
