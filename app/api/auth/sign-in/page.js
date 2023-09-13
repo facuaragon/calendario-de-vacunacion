@@ -58,7 +58,10 @@ export default function SignIn() {
         password,
         redirect: false,
       });
-      if (res?.error) return setError(res.error);
+      if (res?.error) {
+        setBusy(false);
+        return setError(res.error);
+      }
       router.replace("/");
     }
     setBusy(false);

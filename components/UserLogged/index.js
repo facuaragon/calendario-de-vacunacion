@@ -1,41 +1,42 @@
 "use client";
-import { signIn, signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import styles from "./userLogged.module.css";
-import Image from "next/image";
 import Link from "next/link";
+import { useContext, useEffect } from "react";
+import { Context } from "@/context/Context";
+import Modal from "../Modal";
 
 export default function UserLogged({ user }) {
-  const session = useSession();
-  const { data, status } = session;
-  const isAuth = status === "authenticated";
-  console.log(session);
+  const { modal, setModal } = useContext(Context);
+  const { profile, fetchProfile, eraseProfile } = useContext(Context);
+
+  useEffect(() => {
+    if (profile && (!profile.email || !profile.name || !profile.birthday)) {
+      // modal opens to complete data
+      setModal(true);
+    } else {
+      setModal(false);
+    }
+  }, [profile]);
+
+  if (user) {
+    const searchProfile = async () => {
+      await fetchProfile(user.email);
+    };
+    searchProfile();
+  } else {
+    eraseProfile();
+  }
+
   const logOut = () => {
     signOut();
-  };
-  const logInAdmin = () => {
-    signIn("google");
   };
 
   return (
     <div className={styles.container}>
-      {isAuth ? (
+      {modal && <Modal type="completeProfile" />}
+      {user ? (
         <>
-          {/* <Image
-            src={user.image}
-            width={40}
-            height={40}
-            className={styles.image}
-            alt={user.name}
-          />
-          <div>
-            <p className={styles.name}>{user.name}</p>
-            <div className={styles.options}>
-              <div className={styles.sign} onClick={logOut}>
-                Log Out
-              </div>
-            </div>
-          </div> */}
           <div className={styles.sign} onClick={logOut}>
             Log Out
           </div>

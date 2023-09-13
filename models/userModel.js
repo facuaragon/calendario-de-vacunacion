@@ -27,6 +27,9 @@ const userSchema = new Schema({
     enum: ["credentials", "google"],
     default: "credentials",
   },
+  birthday: {
+    type: Date,
+  },
 });
 
 //Hash the password before saving it

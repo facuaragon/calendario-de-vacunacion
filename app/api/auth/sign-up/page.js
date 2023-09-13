@@ -20,11 +20,13 @@ export default function SignUp() {
     name: "",
     email: "",
     password: "",
+    passChecked: "",
   });
   const [errors, setErrors] = useState({
     name: "",
     email: "",
     password: "",
+    passChecked: "",
   });
   const { name, email, password } = userInfo;
   const validations = (form) => {
@@ -52,6 +54,11 @@ export default function SignUp() {
     } else if (!/^.{8,}$/.test(form.password)) {
       errors.password = "Debe tener al menos 8 caracteres";
     }
+    if (!form.passChecked) {
+      errors.passChecked = "Requerido";
+    } else if (form.passChecked !== form.password) {
+      errors.passChecked = "Las contraseñas no coinciden";
+    }
     return errors;
   };
   const handleChange = (e) => {
@@ -63,7 +70,7 @@ export default function SignUp() {
     e.preventDefault();
     const error = validations(userInfo);
     setErrors(error);
-    if (!(error.name || error.email || error.password)) {
+    if (!(error.name || error.email || error.password || error.passChecked)) {
       try {
         const res = await fetch("/api/auth/users", {
           method: "POST",
@@ -114,6 +121,14 @@ export default function SignUp() {
           type="password"
           value={userInfo.password}
           error={errors.password}
+          handleChange={handleChange}
+        />
+        <InputField
+          label="Repetir contraseña"
+          name="passChecked"
+          type="password"
+          value={userInfo.passChecked}
+          error={errors.passChecked}
           handleChange={handleChange}
         />
         <button

@@ -4,12 +4,15 @@ import { NextResponse } from "next/server";
 
 export const POST = async (req) => {
   const body = await req.json();
+  if (!body)
+    return NextResponse.json(
+      { error: "Informacion Faltante" },
+      { status: 422 }
+    );
 
   await startDb();
-
   //check is user already exists
   const oldUser = await UserModel.findOne({ email: body.email });
-
   //if exists return error
   if (oldUser) {
     return NextResponse.json(
