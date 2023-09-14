@@ -21,9 +21,11 @@ const vacunaSchema = new Schema({
   },
   foto: {
     type: String,
+    required: true,
   },
   fechaAplicacion: {
     type: Date,
+    required: true,
   },
 });
 

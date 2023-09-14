@@ -38,7 +38,7 @@ export default function UserLogged({ user }) {
       {user ? (
         <>
           <div className={styles.sign}>
-            <Link href={"/vacunas"}>Vacunas</Link>
+            <Link href={"/perfil"}>Perfil</Link>
           </div>
           <div className={styles.sign} onClick={logOut}>
             Log Out

@@ -7,6 +7,7 @@ export const Context = createContext();
 export const Provider = ({ children }) => {
   const [profile, setProfile] = useState();
   const [modal, setModal] = useState(false);
+  const [vacunas, setVacunas] = useState();
   const fetchProfile = async (email) => {
     const getProfile = async (email) => {
       try {
@@ -26,6 +27,26 @@ export const Provider = ({ children }) => {
       let profileResponse = await getProfile(email);
       if (profileResponse && profileResponse.user) {
         setProfile(profileResponse.user);
+        const getVacunas = async () => {
+          try {
+            const res = await fetch(
+              `${process.env.NEXT_PUBLIC_PROJECT_URL}/api/vacunas/${profileResponse.user.id}`
+            );
+            if (res.ok) {
+              return res.json();
+            } else {
+              throw new error("error al obtener vacunas");
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        const vacunasResponse = await getVacunas();
+        // console.log(vacunasResponse.vacunas);
+        if (vacunasResponse.vacunas) {
+          // console.log("estoy aca");
+          setVacunas(vacunasResponse.vacunas);
+        }
       } else {
         throw new Error("No se encontró el usuario");
       }
@@ -43,6 +64,8 @@ export const Provider = ({ children }) => {
         eraseProfile,
         modal,
         setModal,
+        vacunas,
+        setVacunas,
       }}
     >
       {children}

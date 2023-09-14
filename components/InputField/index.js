@@ -20,25 +20,61 @@ export default function InputField({
       <div className={styles.container}>
         <label className={styles.label}>{label}:</label>
         <div className={styles.group}>
-          <input
-            className={styles.input}
-            id={name}
-            name={name}
-            // placeholder={label}
-            type={type === "password" ? (visible ? "text" : "password") : type}
-            value={value}
-            onChange={handleChange}
-          />
-          {type === "password" && (
-            <div className={styles.icon} onClick={handleVisibility}>
-              {value ? (
-                visible ? (
-                  <EyeOnIcon width={15} height={15} color={"#000"} />
-                ) : (
-                  <EyeOffIcon width={15} height={15} color={"#000"} />
-                )
-              ) : null}
-            </div>
+          {type === "date" ? (
+            <>
+              <input
+                className={styles.input}
+                id={name}
+                name={name}
+                // placeholder={label}
+                type={
+                  type === "password" ? (visible ? "text" : "password") : type
+                }
+                value={value}
+                onChange={handleChange}
+                max={new Date().toISOString().split("T")[0]}
+              />
+            </>
+          ) : type === "file" ? (
+            <>
+              <input
+                className={styles.input}
+                id={name}
+                name={name}
+                // placeholder={label}
+                type={
+                  type === "password" ? (visible ? "text" : "password") : type
+                }
+                // value={value}
+                onChange={handleChange}
+                accept="image/*"
+              />
+            </>
+          ) : (
+            <>
+              <input
+                className={styles.input}
+                id={name}
+                name={name}
+                // placeholder={label}
+                type={
+                  type === "password" ? (visible ? "text" : "password") : type
+                }
+                value={value}
+                onChange={handleChange}
+              />
+              {type === "password" && (
+                <div className={styles.icon} onClick={handleVisibility}>
+                  {value ? (
+                    visible ? (
+                      <EyeOnIcon width={15} height={15} color={"#000"} />
+                    ) : (
+                      <EyeOffIcon width={15} height={15} color={"#000"} />
+                    )
+                  ) : null}
+                </div>
+              )}
+            </>
           )}
         </div>
         <span className={styles.error}>{error}</span>

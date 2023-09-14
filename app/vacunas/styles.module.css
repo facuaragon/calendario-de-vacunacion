@@ -1,0 +1,30 @@
+.form{
+    max-width: 500px;
+    margin: 40px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative
+}
+.registerButton{
+    height: 25px;
+    width: 50%;
+    background-color: rgb(69, 149, 210);
+    border-radius: 5px;
+    border: none;
+    box-shadow: 2px 2px 2px rgb(166, 166, 166);
+    cursor: pointer;
+    transform: all 0.3s ease;
+    padding: 5px 0;
+    color: #fff;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.preview{
+    min-height: 100px;
+    max-height: 100px;
+}
+
+

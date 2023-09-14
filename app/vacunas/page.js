@@ -1,110 +1,169 @@
 "use client";
-
+import styles from "./styles.module.css";
+import InputField from "@/components/InputField";
 import { Context } from "@/context/Context";
 import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Vacunas() {
+  const router = useRouter();
   const { profile } = useContext(Context);
-  const [age, setAge] = useState();
-  const [category, setCategory] = useState();
-  const etapas = [
-    {
-      embarazo: true,
-      recienNacido: false,
-      edadMin: 0,
-      edadMax: 0,
-      nombre: "Persona Gestante",
-    },
-    {
-      embarazo: false,
-      recienNacido: true,
-      edadMin: 0,
-      edadMax: 0,
-      nombre: "Persona recién Nacida",
-    },
-    {
-      embarazo: false,
-      recienNacido: false,
-      edadMin: 0,
-      edadMax: 1,
-      nombre: "Hasta el año de vida",
-    },
-    {
-      embarazo: false,
-      recienNacido: false,
-      edadMin: 1,
-      edadMax: 2,
-      nombre: "Hasta los dos años de vida",
-    },
-    {
-      embarazo: false,
-      recienNacido: false,
-      edadMin: 2,
-      edadMax: 5,
-      nombre: "5 años",
-    },
-    {
-      embarazo: false,
-      recienNacido: false,
-      edadMin: 5,
-      edadMax: 11,
-      nombre: "11 años",
-    },
-    {
-      embarazo: false,
-      recienNacido: false,
-      edadMin: 11,
-      edadMax: 65,
-      nombre: "Personas jóvenes y adultas",
-    },
-    {
-      embarazo: false,
-      recienNacido: false,
-      edadMin: 65,
-      edadMax: Infinity,
-      nombre: "A partir de los 65 años",
-    },
-  ];
-  console.log(profile);
-  const getAge = (birthday) => {
-    const today = new Date();
-    const birthDate = new Date(birthday);
-    let difference = today.getFullYear() - birthDate.getFullYear();
-    const months = today.getMonth() - birthDate.getMonth();
-
-    if (
-      months < 0 ||
-      (months === 0 && today.getDate() <= birthDate.getDate())
-    ) {
-      difference--;
-    }
-    setAge(difference);
-  };
-
+  const [preview, setPreview] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [vacuna, setVacuna] = useState({
+    userId: "",
+    nombre: "",
+    lote: "",
+    vacunatorio: "",
+    foto: "",
+    fechaAplicacion: new Date().toISOString().split("T")[0],
+  });
+  const [errors, setErrors] = useState({
+    userId: "",
+    nombre: "",
+    lote: "",
+    vacunatorio: "",
+    foto: "",
+    fechaAplicacion: "",
+  });
   useEffect(() => {
     if (profile) {
-      getAge(profile?.birthday.split("T")[0]);
-      if (age) {
-        const cat = etapas.map((etapa) => {
-          if (etapa.edadMin <= age && etapa.edadMax > age) {
-            setCategory(etapa.nombre);
-          }
-          return;
-        });
+      setVacuna({ ...vacuna, userId: profile.id });
+    }
+  }, [profile]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "foto") {
+      if (e.target.files[0]) {
+        const file = e.target.files[0];
+        try {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onloadend = () => {
+            setVacuna({ ...vacuna, foto: reader.result });
+            setPreview(reader.result);
+          };
+        } catch (error) {
+          console.log("Error File Reader: ", error);
+        }
+      } else {
+        setPreview(false);
+      }
+    } else {
+      setVacuna({ ...vacuna, [name]: value });
+      // console.log(
+      //   `${Object.keys(vacuna).find((key) => key === name)}: `,
+      //   vacuna[name]
+      // );
+    }
+  };
+  const validations = (form) => {
+    const errors = {};
+    if (!form.nombre) {
+      errors.nombre = "Requerido";
+    } else {
+      errors.nombre = "";
+    }
+    if (!form.foto) {
+      errors.foto = "Requerido";
+    } else {
+      errors.foto = "";
+    }
+    if (!form.fechaAplicacion) {
+      errors.fechaAplicacion = "Requerido";
+    } else if (form.fechaAplicacion >= new Date().toISOString().split("T")[0]) {
+      errors.fechaAplicacion = "La fecha debe ser anterior al día de hoy";
+    } else {
+      errors.fechaAplicacion = "";
+    }
+    return errors;
+  };
+  const handleSubmit = async (e) => {
+    setBusy(true);
+    e.preventDefault();
+    const error = validations(vacuna);
+    setErrors(error);
+    if (!(error.nombre || error.foto || error.fechaAplicacion)) {
+      console.log("vacuna:", vacuna);
+      try {
+        const res = await fetch(`/api/vacunas`, {
+          method: "POST",
+          body: JSON.stringify(vacuna),
+        }).then((res) => res.json());
+        console.log("res", res);
+        if (res?.vacuna) {
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
-  }, [profile, age]);
+    setBusy(false);
+  };
   return (
     <>
-      <h1>Hola {profile?.name}</h1>
-      <p>
-        Segun las indicaciones del Ministerio de Salud y la informacion brindada
-        al sitio tienes <strong>{age}</strong> años
-      </p>
-      <p>
-        Por lo que te encuentras en la siguiente categoría:{" "}
-        <strong>{category}</strong>
-      </p>
+      <h1>Vacunas</h1>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <p>{vacuna.userId}</p>
+        <InputField
+          label="Nombre de Vacuna"
+          name="nombre"
+          type="text"
+          value={vacuna.nombre}
+          error={errors.nombre}
+          handleChange={handleChange}
+        />
+        <InputField
+          label="Lote de Vacuna"
+          name="lote"
+          type="text"
+          value={vacuna.lote}
+          error={errors.lote}
+          handleChange={handleChange}
+        />
+        <InputField
+          label="Nombre del Vacunatorio"
+          name="vacunatorio"
+          type="text"
+          value={vacuna.vacunatorio}
+          error={errors.vacunatorio}
+          handleChange={handleChange}
+        />
+        <InputField
+          label="Fecha de Aplicacion"
+          name="fechaAplicacion"
+          type="date"
+          value={vacuna.fechaAplicacion}
+          error={errors?.fechaAplicacion}
+          handleChange={handleChange}
+        />
+        <InputField
+          label="Foto del certificado"
+          name="foto"
+          type="file"
+          // value={vacuna.foto}
+          error={errors?.foto}
+          handleChange={handleChange}
+        />
+        {preview ? (
+          <img className={styles.preview} src={preview} alt={vacuna.foto} />
+        ) : (
+          <img
+            className={styles.preview}
+            src="https://res.cloudinary.com/dzpni2m96/image/upload/v1694720817/imge-placeholder2_sqmvby.jpg"
+            alt={vacuna.foto}
+          />
+        )}
+        <button
+          className={styles.registerButton}
+          type="submit"
+          disabled={busy}
+          style={{ opacity: busy ? 0.5 : 1 }}
+        >
+          Registrar Vacuna
+        </button>
+      </form>
     </>
   );
 }
